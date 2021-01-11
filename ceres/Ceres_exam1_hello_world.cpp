@@ -17,7 +17,7 @@ struct CostFunctor {
     }
 };
 
-// 求解的问题是求x使得12(10−x)2取到最小值
+// Minimize 0.5 (10 - x)^2 using jacobian matrix computed using automatic differentiation.
 int main(int argc, char **argv) {
     google::InitGoogleLogging(argv[0]);
 
