@@ -1,6 +1,13 @@
 # BA_exercise
 A exercise of BA, using g2o, ceres and eigen
-Note that all CMakeList files is for CLion IDE, may get sth wrong in terminal, especially the third party library.
+Before build the source, make sure that the third party library is installed rightly.
+
+# ThirdParty
+>googlelog
+>
+>g2o
+>
+>ceres
 
 # Clone
 git clone --recurse-submodules -j8 https://github.com/shanpenghui/BA_exercise
@@ -26,7 +33,27 @@ make -j4
 ```
 
 ## 3.Start BA_g2o
+```
+cd g2o
+mkdir build
+cd build
+cmake ..
+make -j4
+./BA_g2o
+```
 
 ## 4.Start BA_ceres
-
 >Before running BA_ceres, you can get used to using ceres by the examples offered in source folder named ceres
+```
+cd ceres
+mkdir build
+cd build
+cmake ..
+make -j4
+./BA_ceres
+```
+
+# 备注
+
+当前版本是没有优化point pose的，即只优化位姿
+
