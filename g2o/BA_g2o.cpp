@@ -25,6 +25,7 @@
 #include <g2o/core/optimization_algorithm_levenberg.h>
 #include <g2o/solvers/csparse/linear_solver_csparse.h>
 #include <g2o/types/sba/types_six_dof_expmap.h>
+#include <glog/logging.h>
 
 using namespace Eigen;
 using namespace cv;
@@ -112,6 +113,7 @@ public:
         // |v| = | 0   1/dy  v0| * |f * Yc/Zc|
         // |1|   | 0     0    1|   |    1    |
         _error = measurement() - cam->cam_map(v1->estimate().map(v2->estimate()));
+        LOG(INFO) << "Err: " << _error(0) << " " << _error(1);
     }
 
     // linearizeOplus函数是在当前顶点的值下，该误差对优化变量的偏导数，即jacobian
@@ -174,6 +176,22 @@ public:
         _jacobianOplusXj(1, 5) = choose_my_jacobian?
                                  (x / z * cam->focal_length) :
                                  (y / z_2 * cam->focal_length);
+
+        auto&& log = COMPACT_GOOGLE_LOG_INFO;
+        log.stream() << "JacXi: [";
+        for (int i = 0; i < _jacobianOplusXi.rows(); ++i) {
+            for (int j = 0; j < _jacobianOplusXi.cols(); ++j) {
+                log.stream() << _jacobianOplusXi(i,j) << " ";
+            }
+        }
+        log.stream() << "]\n";
+        log.stream() << "JacXj: [";
+        for (int i = 0; i < _jacobianOplusXj.rows(); ++i) {
+            for (int j = 0; j < _jacobianOplusXj.cols(); ++j) {
+                log.stream() << _jacobianOplusXj(i,j) << " ";
+            }
+        }
+        log.stream() << "]\n";
     }
 
 public:
@@ -186,6 +204,11 @@ void bundleAdjustment(
         Mat &K);
 
 int main(int argc, char **argv) {
+
+    // Google log
+    google::InitGoogleLogging(argv[0]);
+//    google::SetLogDestination(google::GLOG_INFO, "../../log/g2o_log_");
+
     vector<Point3f> p3d;
     vector<Point2f> p2d;
 
@@ -274,9 +297,10 @@ void bundleAdjustment(
     for (const Point3f p:points_3d)   // landmarks
     {
         g2o::VertexPointXYZ *point = new g2o::VertexPointXYZ();
-        point->setId(index++);
+        point->setId(index);
         point->setEstimate(Eigen::Vector3d(p.x, p.y, p.z));
         point->setMarginalized(true);
+        point->setFixed(index++);
         optimizer.addVertex(point);
     }
     // ----------------------结束你的代码

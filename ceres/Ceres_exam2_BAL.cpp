@@ -155,6 +155,7 @@ struct SnavelyReprojectionError {
 };
 
 int main(int argc, char** argv) {
+    // Google log
     google::InitGoogleLogging(argv[0]);
 
     BALProblem bal_problem;

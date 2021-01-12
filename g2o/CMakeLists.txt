@@ -5,13 +5,14 @@ project(BA_g2o)
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Pangolin REQUIRED)
+find_package(glog)
 
 set(G2O_PATH ${CMAKE_CURRENT_SOURCE_DIR}/..)
 message(${G2O_PATH})
 
 set(CMAKE_MODULE_PATH "${G2O_PATH}/Thirdparty/g2o/cmake_modules;${CMAKE_MODULE_PATH}")
 find_package(G2O REQUIRED)
-#find_package(CSparse REQUIRED)
+find_package(CSparse REQUIRED)
 #find_package(SuiteSparse REQUIRED)
 
 include_directories(
@@ -30,6 +31,6 @@ SET(G2O_LIBS g2o_cli g2o_ext_freeglut_minimal g2o_simulator g2o_solver_slam2d_li
         )
 
 add_executable(BA_g2o BA_g2o.cpp)
-target_link_libraries(BA_g2o ${OpenCV_LIBS} ${G2O_LIBS}
+target_link_libraries(BA_g2o ${OpenCV_LIBS} ${G2O_LIBS} glog::glog
 #        ${SuiteSparse_LIBRARIES}
         )

@@ -40,6 +40,8 @@ public:
         residuals[0] = u - xp;
         residuals[1] = v - yp;
 
+        LOG(INFO) << residuals[0] << " " << residuals[1];
+
         return true;
     }
 
@@ -172,6 +174,10 @@ bool readData() {
 
 int main(int argc, char *argv[]) {
 
+    // Google log
+    google::InitGoogleLogging(argv[0]);
+//    google::SetLogDestination(google::GLOG_INFO, "../../log/ceres_log_");
+
     if (!readData()) {
         cerr << "Read data failed." << endl;
         return -1;
@@ -182,8 +188,8 @@ int main(int argc, char *argv[]) {
 
     ceres::Problem problem;
     ceres::LossFunction *lossfunction = NULL;
-    double camera_rvec[3] = {0};
-    double camera_t[3] = {0};
+    double camera_rvec[3] = {0, 0, 0};
+    double camera_t[3] = {0, 0, 0};
 
     for (uint i = 0; i < p3d.size(); i++) {
         Eigen::Vector3d p3dVec(p3d[i](0), p3d[i](1), p3d[i](2));
