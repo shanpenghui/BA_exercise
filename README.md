@@ -1,6 +1,7 @@
 # BA_exercise
 A exercise of BA, using g2o, ceres and eigen
 Before build the source, make sure that the third party library is installed rightly.
+其中g2o版本是六哥的版本，感谢六哥。同时也感谢黄志明的大力支持和解惑，非常感谢。
 
 # ThirdParty
 >googlelog
