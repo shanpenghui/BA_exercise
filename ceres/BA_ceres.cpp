@@ -130,8 +130,8 @@ Eigen::Vector3d rot2rodrigues(const Eigen::Matrix3d &R) {
 }
 
 bool readData() {
-    std::string p3d_file = "../p3d.txt";
-    std::string p2d_file = "../p2d.txt";
+    std::string p3d_file = "../../data/p3d.txt";
+    std::string p2d_file = "../../data/p2d.txt";
     // 导入3D点和对应的2D点
     ifstream fp3d(p3d_file);
     if (!fp3d) {

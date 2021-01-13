@@ -31,8 +31,8 @@ using namespace Eigen;
 using namespace cv;
 using namespace std;
 
-string p3d_file = "../p3d.txt";
-string p2d_file = "../p2d.txt";
+string p3d_file = "../../data/p3d.txt";
+string p2d_file = "../../data/p2d.txt";
 
 /****************************
  * 自定义模型的顶点，需要自己定义的内容是：
