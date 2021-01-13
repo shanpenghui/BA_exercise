@@ -223,9 +223,17 @@ double ComputeReprojectionError(Eigen::VectorXd &ReprojectionError, std::vector<
         for (int i = 0; i < N_points3d; ++i) {
             Eigen::MatrixXd JacobianPose_i_(Eigen::MatrixXd::Zero(2, 6));
             // P' = R*P + t
-            Eigen::Vector3d P_ = VertexPoses[j].block<3, 3>(0, 0) * points3d[i] + VertexPoses[0].block<3, 1>(0, 3);
+            Eigen::MatrixXd R_ = VertexPoses[j].block<3, 3>(0, 0);
+            Eigen::MatrixXd t_ = VertexPoses[j].block<3, 1>(0, 3);
+            if(debug_) {
+//                cout << "R_ : " << R_ << endl;
+//                cout << "t_ : " << t_ << endl;
+            }
+            Eigen::Vector3d P_ = R_ * points3d[i] + t_;
             double x = P_(0, 0), y = P_(1, 0), z = P_(2, 0), z_2 = z * z;
+            // 观测值
             double p_u = cx + fx * x / z, p_v = cy + fy * y / z;
+            // 误差项
             double du = Points2D[i](0, 0) - p_u, dv = Points2D[i](1, 0) - p_v;
             ReprojectionError(j * N_points3d * 2 + 2 * i, 0) = du;
             ReprojectionError(j * N_points3d * 2 + 2 * i + 1, 0) = dv;
@@ -254,7 +262,7 @@ bool isFinished(const double current_error, const double previous_error) {
 Eigen::MatrixXd ComputeSe3(const Eigen::MatrixXd &JacobianPose, const Eigen::VectorXd &ReprojectionError) {
     Eigen::MatrixXd H = JacobianPose.transpose() * JacobianPose;
     if(debug_) {
-        cout << "H : rows(" << H.rows() <<  ") cols(" << H.cols() << ")" << endl;
+//        cout << "H : rows(" << H.rows() <<  ") cols(" << H.cols() << ")" << endl;
     }
 
     bool chose_ldlt = true;
@@ -262,8 +270,8 @@ Eigen::MatrixXd ComputeSe3(const Eigen::MatrixXd &JacobianPose, const Eigen::Vec
         Eigen::MatrixXd g = -JacobianPose.transpose() * ReprojectionError;
         Eigen::MatrixXd delta_x_ldlt = H.ldlt().solve(g);
         if(debug_) {
-            cout << "delta_x_ldlt : rows(" << delta_x_ldlt.rows() <<  ") cols(" << delta_x_ldlt.cols() << ")" << endl;
-            cout << delta_x_ldlt << endl;
+//            cout << "delta_x_ldlt : rows(" << delta_x_ldlt.rows() <<  ") cols(" << delta_x_ldlt.cols() << ")" << endl;
+//            cout << delta_x_ldlt << endl;
         }
         return delta_x_ldlt;
     }
@@ -290,36 +298,37 @@ void UpdateSE3(std::vector<SE3> &VertexPoses, Eigen::VectorXd delta_se3) {
         delta_se3_i.t_ = delta_se3.block<3,1>(3,0);
 
         if(debug_) {
-            cout << "delta_se3_i.r_ : rows(" << delta_se3_i.r_.rows() <<  ") cols(" << delta_se3_i.r_.cols() << ")" << endl;
-            cout << delta_se3_i.r_ << endl;
-            cout << "delta_se3_i.t_ : rows(" << delta_se3_i.t_.rows() <<  ") cols(" << delta_se3_i.t_.cols() << ")" << endl;
-            cout << delta_se3_i.t_ << endl;
+//            cout << "delta_se3_i.r_ : rows(" << delta_se3_i.r_.rows() <<  ") cols(" << delta_se3_i.r_.cols() << ")" << endl;
+//            cout << delta_se3_i.r_ << endl;
+//            cout << "delta_se3_i.t_ : rows(" << delta_se3_i.t_.rows() <<  ") cols(" << delta_se3_i.t_.cols() << ")" << endl;
+//            cout << delta_se3_i.t_ << endl;
         }
 
         // map se3 to SE3
         Eigen::Matrix3d rot_ = rodrigues2rot(delta_se3_i.r_);
         if(debug_) {
-            cout << "rot_ : rows(" << rot_.rows() << ") cols(" << rot_.cols() << ")"
-                 << endl;
-            cout << rot_ << endl;
+//            cout << "rot_ : rows(" << rot_.rows() << ") cols(" << rot_.cols() << ")"
+//                 << endl;
+//            cout << rot_ << endl;
         }
 
         // create SE3 for delta_se3
         SE3 delta_SE3_i;
         delta_SE3_i.block<3,3>(0,0) = rot_;
         delta_SE3_i.block<3,1>(0,3) = delta_se3_i.t_;
+        delta_SE3_i(3,3) = 1;
         if(debug_) {
-            cout << "delta_SE3_i : rows(" << delta_SE3_i.rows() << ") cols(" << delta_SE3_i.cols() << ")"
-                 << endl;
-            cout << delta_SE3_i << endl;
+//            cout << "delta_SE3_i : rows(" << delta_SE3_i.rows() << ") cols(" << delta_SE3_i.cols() << ")"
+//                 << endl;
+//            cout << delta_SE3_i << endl;
         }
 
         // Update pose_i
         VertexPoses[i] = delta_SE3_i * VertexPoses[i];
 
         if(debug_) {
-            cout << "VertexPoses[" << i << "] : rows(" << VertexPoses[i].rows() <<  ") cols(" << VertexPoses[i].cols() << ")" << endl;
-            cout << VertexPoses[i] << endl;
+//            cout << "VertexPoses[" << i << "] : rows(" << VertexPoses[i].rows() <<  ") cols(" << VertexPoses[i].cols() << ")" << endl;
+//            cout << VertexPoses[i] << endl;
         }
     }
 
@@ -375,7 +384,10 @@ int main(int argc, char **argv) {
 
     // 高斯牛顿解非线性方程
     Gaussian_Newton(50, VertexPoses, VertexPoints3D, Points2D);
-
+    for (int i = 0; i < VertexPoses.size(); ++i) {
+        cout << "VertexPoses[" << i << "] : rows(" << VertexPoses[i].rows() <<  ") cols(" << VertexPoses[i].cols() << ")" << endl;
+        cout << VertexPoses[i] << endl;
+    }
     return 0;
 }
 
