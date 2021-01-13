@@ -32,7 +32,7 @@ struct Graph {
 
 // 相机内参
 double fx = 520.9, fy = 521.0, cx = 325.1, cy = 249.7;
-bool debug_ = true;
+bool debug_ = false;
 
 /**
  * @brief 旋转向量转换成旋转矩阵，即李群->李代数
@@ -158,7 +158,7 @@ void ComputeJacobian(Eigen::MatrixXd &JacobianPose, std::vector<Point3D> &points
     //                     /     Point1     |                                                 J1(2×6)        |
     //        PoseN_poses         ...       |        0(2×6)            0(2×6)       ...        ...           | (2·N_points × 6)·N_poses =
     //                     \ PointN_points  |                                              JN_points(2×6)    | (2·N_poses·N_points × 6·N_poses)
-    JacobianPose = Eigen::MatrixXd::Zero(2 * N_points, 6 * N_poses);
+    JacobianPose = Eigen::MatrixXd::Zero(2 * N_poses * N_points, 6 * N_poses);
     if(debug_) {
         cout << "JacobianPose : rows(" << JacobianPose.rows() <<  ") cols(" << JacobianPose.cols() << ")" << endl;
     }
@@ -171,7 +171,9 @@ void ComputeJacobian(Eigen::MatrixXd &JacobianPose, std::vector<Point3D> &points
         for (int i = 0; i < N_points; ++i) {
 
             // P' = R*P + t
-            Eigen::Vector3d P_ = VertexPoses[j].block<3, 3>(0, 0) * points[i] + VertexPoses[0].block<3, 1>(0, 3);
+            Eigen::MatrixXd R_ = VertexPoses[j].block<3, 3>(0, 0);
+            Eigen::MatrixXd t_ = VertexPoses[j].block<3, 1>(0, 3);
+            Eigen::Vector3d P_ = R_ * points[i] + t_;
             double x = P_(0, 0), y = P_(1, 0), z = P_(2, 0), z_2 = z * z;
 
             // Jacobian of pose : のf/のT
@@ -195,7 +197,7 @@ void ComputeJacobian(Eigen::MatrixXd &JacobianPose, std::vector<Point3D> &points
     }
 
     if(debug_) {
-//        cout << JacobianPose << endl;
+        cout << JacobianPose << endl;
     }
 }
 
@@ -237,7 +239,7 @@ double ComputeReprojectionError(Eigen::VectorXd &ReprojectionError, std::vector<
             double du = Points2D[i](0, 0) - p_u, dv = Points2D[i](1, 0) - p_v;
             ReprojectionError(j * N_points3d * 2 + 2 * i, 0) = du;
             ReprojectionError(j * N_points3d * 2 + 2 * i + 1, 0) = dv;
-            reprojection_error += sqrt(du * du + dv * dv);
+            reprojection_error += (du * du + dv * dv);
         }
     }
     if(debug_) {
@@ -294,8 +296,8 @@ void UpdateSE3(std::vector<SE3> &VertexPoses, Eigen::VectorXd delta_se3) {
     for (int i = 0; i < N_poses; ++i) {
         // get delta_se3
         se3 delta_se3_i;
-        delta_se3_i.r_ = delta_se3.block<3,1>(0,0);
-        delta_se3_i.t_ = delta_se3.block<3,1>(3,0);
+        delta_se3_i.r_ = delta_se3.block<3,1>(3,0);
+        delta_se3_i.t_ = delta_se3.block<3,1>(0,0);
 
         if(debug_) {
 //            cout << "delta_se3_i.r_ : rows(" << delta_se3_i.r_.rows() <<  ") cols(" << delta_se3_i.r_.cols() << ")" << endl;
@@ -349,13 +351,15 @@ void Gaussian_Newton(const int iterations, std::vector<SE3> &poses, vector<Point
         // compute error
         cur_error = ComputeReprojectionError(Error, p3ds, poses, p2ds);
         // if error become more greater, stop
-        if(isFinished(cur_error, pre_error)) {
-            cout << "Iteration finished, stop." << endl;
-            return;
-        }
-        pre_error = cur_error;
+//        if(isFinished(cur_error, pre_error)) {
+//            cout << "Iteration finished, stop." << endl;
+//            return;
+//        }
+//        pre_error = cur_error;
         // computer delta_x
         Eigen::VectorXd delta_se3 = ComputeSe3(J_T, Error);
+        // 利用delta的值来停止迭代效果更好
+        if(delta_se3.norm() < 1e-5) break;
         if (isnan(delta_se3(0,0))) {
             cout << "delta_se3 is nan!" << endl;
             break;
@@ -383,7 +387,7 @@ int main(int argc, char **argv) {
     VertexPoses.push_back(initial_pose);
 
     // 高斯牛顿解非线性方程
-    Gaussian_Newton(50, VertexPoses, VertexPoints3D, Points2D);
+    Gaussian_Newton(100, VertexPoses, VertexPoints3D, Points2D);
     for (int i = 0; i < VertexPoses.size(); ++i) {
         cout << "VertexPoses[" << i << "] : rows(" << VertexPoses[i].rows() <<  ") cols(" << VertexPoses[i].cols() << ")" << endl;
         cout << VertexPoses[i] << endl;
