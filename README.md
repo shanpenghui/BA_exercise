@@ -54,6 +54,24 @@ make -j4
 ./BA_ceres
 ```
 
+## 5.Start BA_eigen
+```
+cd eigen
+mkdir build
+cd build
+cmake ..
+make -j4
+./BA_eigen
+```
+
+# 输出
+## g2o
+
+## ceres
+
+## eigen
+
+
 # 备注
 
 当前版本是没有优化point pose的，即只优化位姿
