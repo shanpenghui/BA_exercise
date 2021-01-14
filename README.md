@@ -66,11 +66,11 @@ make -j4
 
 # 输出
 ## g2o
-
+![image](https://github.com/shanpenghui/BA_exercise/blob/main/imgs/g2o.png)
 ## ceres
-
+![image](https://github.com/shanpenghui/BA_exercise/blob/main/imgs/ceres.png)
 ## eigen
-
+![image](https://github.com/shanpenghui/BA_exercise/blob/main/imgs/eigen.png)
 
 # 备注
 
