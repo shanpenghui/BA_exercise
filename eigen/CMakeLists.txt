@@ -9,5 +9,9 @@ include_directories(
         ${OpenCV_INCLUDE_DIRS}
 )
 
-add_executable(BA_eigen BA_eigen.cpp)
-target_link_libraries(BA_eigen glog::glog Eigen3::Eigen)
+add_executable(BA_eigen_only_pose BA_eigen_only_pose.cpp)
+target_link_libraries(BA_eigen_only_pose glog::glog Eigen3::Eigen)
+
+add_executable(BA_eigen_pose_and_points BA_eigen_pose_and_points.cpp)
+target_link_libraries(BA_eigen_pose_and_points glog::glog Eigen3::Eigen)
+
