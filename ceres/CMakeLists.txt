@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 project(BA_ceres)
 
-set(CERES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/..)
-message(${CERES_PATH})
+find_package (Eigen3 REQUIRED)
 
-find_package(Ceres REQUIRED PATHS "${CERES_PATH}/Thirdparty/ceres-solver")
+set(Ceres_DIR "${CMAKE_CURRENT_BINARY_DIR}/../../ThirdParties/ceres-solver/lib/cmake/Ceres")
+message(${Ceres_DIR})
+find_package(Ceres)
 include_directories(${CERES_INCLUDE_DIRS})
 
 #find_package(OpenCV REQUIRED)
@@ -13,7 +14,8 @@ include_directories(${CERES_INCLUDE_DIRS})
 
 add_executable(BA_ceres BA_ceres.cpp)
 target_link_libraries(BA_ceres ${CERES_LIBRARIES}
-#        ${OpenCV_LIBS}
+        Eigen3::Eigen
+        #        ${OpenCV_LIBS}
         )
 
 add_executable(Ceres_exam1_hello_world Ceres_exam1_hello_world.cpp)
