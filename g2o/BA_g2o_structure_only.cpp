@@ -45,8 +45,8 @@ using namespace Eigen;
 using namespace cv;
 using namespace std;
 
-string p3d_file = "../../data/p3d.txt";
-string p2d_file = "../../data/p2d.txt";
+//string p3d_file = "../../data/p3d.txt";
+//string p2d_file = "../../data/p2d.txt";
 
 /****************************
  * 自定义模型的顶点，需要自己定义的内容是：
@@ -222,7 +222,7 @@ int main(int argc, char **argv) {
     if (argc < 2) {
         cout << endl;
         cout << "Please type: " << endl;
-        cout << "ba_demo [PIXEL_NOISE] [OUTLIER RATIO] [ROBUST_KERNEL] [STRUCTURE_ONLY] [DENSE]" << endl;
+        cout << "BA_g2o_structure_only [PIXEL_NOISE] [OUTLIER RATIO] [ROBUST_KERNEL] [STRUCTURE_ONLY] [DENSE]" << endl;
         cout << endl;
         cout << "PIXEL_NOISE: noise in image space (E.g.: 1)" << endl;
         cout << "OUTLIER_RATIO: probability of spuroius observation  (default: 0.0)" << endl;
@@ -231,6 +231,8 @@ int main(int argc, char **argv) {
                 << "STRUCTURE_ONLY: performe structure-only BA to get better point initializations (0 or 1; default: 0==false)"
                 << endl;
         cout << "DENSE: Use dense solver (0 or 1; default: 0==false)" << endl;
+        cout << endl;
+        cout << "Example : ./BA_g2o_structure_only 1 0 0 0 0";
         cout << endl;
         cout << "Note, if OUTLIER_RATIO is above 0, ROBUST_KERNEL should be set to 1==true." << endl;
         cout << endl;
@@ -269,6 +271,9 @@ int main(int argc, char **argv) {
     Mat K = (Mat_<double>(3, 3) << 520.9, 0, 325.1, 0, 521.0, 249.7, 0, 0, 1);
 
     // 导入3D点和对应的2D点
+    std::string path = getcwd(nullptr,0);
+    std::string p3d_file = path + "/../../data/p3d.txt";
+    std::string p2d_file = path + "/../../data/p2d.txt";
     ifstream fp3d(p3d_file);
     if (!fp3d) {
         cout << "No p3d.text file" << endl;

@@ -7,6 +7,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <fstream>
+#include <zconf.h>
 
 using namespace std;
 using namespace Eigen;
@@ -102,8 +103,9 @@ Eigen::Vector3d rot2rodrigues(const Eigen::Matrix3d &R) {
 }
 
 bool readData(std::vector<Point3D> &VertexPoints3D, std::vector<Point2D> &VertexPoints2D) {
-    std::string p3d_file = "../../data/p3d.txt";
-    std::string p2d_file = "../../data/p2d.txt";
+    std::string path = getcwd(nullptr,0);
+    std::string p3d_file = path + "/../../data/p3d.txt";
+    std::string p2d_file = path + "/../../data/p2d.txt";
     // 导入3D点和对应的2D点
     ifstream fp3d(p3d_file);
     if (!fp3d) {

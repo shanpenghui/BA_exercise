@@ -78,35 +78,11 @@ cmake .. -DCMAKE_INSTALL_PREFIX="/home/shenz/Documents/ba/BA_exercise/ThirdParti
 
 # Usage
 
-## 1.Start BA_g2o
 ```
-cd g2o
-mkdir build
-cd build
-cmake ..
-make -j4
-./BA_g2o
-```
-
-## 2.Start BA_ceres
->Before running BA_ceres, you can get used to using ceres by the examples offered in source folder named ceres
-```
-cd ceres
-mkdir build
-cd build
-cmake ..
-make -j4
-./BA_ceres
-```
-
-## 3.Start BA_eigen
-```
-cd eigen
-mkdir build
-cd build
-cmake ..
-make -j4
-./BA_eigen
+mkdir build && cd build && cmake .. && make -j32
+cd ceres && ./BA_ceres
+or others such as:
+cd g2o && ./BA_g2o
 ```
 
 # 输出

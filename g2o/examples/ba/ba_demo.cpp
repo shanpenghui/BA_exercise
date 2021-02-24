@@ -66,6 +66,8 @@ int main(int argc, const char *argv[]) {
                 << endl;
         cout << "DENSE: Use dense solver (0 or 1; default: 0==false)" << endl;
         cout << endl;
+        cout << "Example : ./BA_g2o_structure_only 1 0 0 0 0";
+        cout << endl;
         cout << "Note, if OUTLIER_RATIO is above 0, ROBUST_KERNEL should be set to 1==true." << endl;
         cout << endl;
         exit(0);

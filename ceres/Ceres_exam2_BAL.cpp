@@ -159,7 +159,8 @@ int main(int argc, char** argv) {
     google::InitGoogleLogging(argv[0]);
 
     BALProblem bal_problem;
-    std::string file_name = "../problem-49-7776-pre.txt";
+    std::string path = getcwd(nullptr, 0);
+    std::string file_name = path + "/../../ceres/problem-49-7776-pre.txt";
     if (!bal_problem.LoadFile(file_name.c_str())) {
         std::cerr << "ERROR: unable to open file " << file_name << "\n";
         return 1;
