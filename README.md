@@ -1,79 +1,83 @@
 # BA_exercise
-A exercise of BA, using g2o, ceres and eigen
-Before build the source, make sure that the third party library is installed rightly.
-其中g2o版本是六哥的版本，感谢六哥。同时也感谢黄志明的大力支持和解惑，非常感谢。
+A exercise of BA, using g2o, ceres and eigen.
+
+感谢六哥、黄志明、付堉家的支持。
 
 # Clone
 git clone --recurse-submodules -j8 https://github.com/shanpenghui/BA_exercise
 
-# ThirdParties
+# Third Parties
+The version listed is currently used. Check current version by the command in brackets.
 
-Just run a shell file to install third parties.
+- Cmake 3.16.3 ++ (cmake --version)
+- Eigen 3.3.7 ++ (pkg-config --modversion eigen3)
+- OpenCV 4.2.0 ++ (pkg-config --modversion opencv4)
+- g2o (Sat Feb 27 18:55:01 2021 ++)
+- ceres (Wed Feb 17 18:38:29 2021 ++)
+- glog (Mon Mar 1 12:59:21 2021 ++)
+
+# Install Third Parties
+
+You should install these libraries in order.
+
+## 1.Eigen
 ```shell script
-cd shells && ./insall_third_parties.sh
+sudo apt update && sudo apt-get install libeigen3-dev
+or
+git clone https://gitlab.com/libeigen/eigen.git
+cd eigen && mkdir build && cd build && git checkout 3.3.7 && cmake .. && make -j32 && sudo make install
 ```
 
-Or you can choose to install them manually.
-## 1.googlelog
-[https://github.com/google/glog.git](https://github.com/google/glog.git)
+## 2.OpenCV
+Ref: [https://docs.opencv.org/master/d0/d3d/tutorial_general_install.html](https://docs.opencv.org/master/d0/d3d/tutorial_general_install.html)
 
 ```shell script
-git clone https://github.com/google/glog.git
-cd glog && rm -rf build && mkdir build && cd build && git checkout master && git pull
-cmake .. && make -j4 && sudo make install
+sudo apt update && sudo apt-get install libeigen3-dev
+or
+git clone https://github.com/opencv/opencv
+git -C opencv checkout 4.2.0
+git clone https://github.com/opencv/opencv_contrib
+git -C opencv_contrib checkout 4.2.0
+git clone https://github.com/opencv/opencv_extra
+git -C opencv_extra checkout 4.2.0
+cmake ..
+make -j32
+sudo make install
 ```
-## 2.g2o
-[https://github.com/RainerKuemmerle/g2o](https://github.com/RainerKuemmerle/g2o)
 
-### Requirements
-
--   C++14 compiler (CI pipeline runs with gcc, clang and MSVC)
--   cmake             <http://www.cmake.org>
--   Eigen3            <http://eigen.tuxfamily.org>
-
-On Ubuntu / Debian these dependencies are resolved by installing the
-following packages.
-
--   cmake
--   libeigen3-dev
-
-### Optional requirements
-
--   suitesparse       <http://faculty.cse.tamu.edu/davis/suitesparse.html>
--   Qt5               <http://qt-project.org>
--   libQGLViewer      <http://www.libqglviewer.com>
-
-On Ubuntu / Debian these dependencies are resolved by installing the
-following packages.
-
--   libsuitesparse-dev
--   qtdeclarative5-dev
--   qt5-qmake
--   libqglviewer-dev-qt5
+## 3.g2o
+Ref: [https://github.com/RainerKuemmerle/g2o](https://github.com/RainerKuemmerle/g2o)
 
 **Remember to change the DCMAKE_INSTALL_PREFIX path!!!**
 
 ```shell script
-sudo apt install libeigen3-dev libsuitesparse-dev qtdeclarative5-dev qt5-qmake libqglviewer-dev-qt5
-git clone https://github.com/RainerKuemmerle/g2o
-cd g2o && rm -rf build install && mkdir install && mkdir build && cd build && git checkout master && git pull
-cmake .. -DCMAKE_INSTALL_PREFIX="/home/shenz/Documents/ba/BA_exercise/ThirdParties/g2o/install" && make -j4 && make install
+sudo apt update && sudo apt install libeigen3-dev libsuitesparse-dev qtdeclarative5-dev qt5-qmake libqglviewer-dev-qt5
+git clone https://github.com/RainerKuemmerle/g2o.git && cd g2o && mkdir install && mkdir build && cd build && git checkout master
+cmake .. && make -j32 && sudo make install
+or
+cmake .. -DCMAKE_INSTALL_PREFIX="/home/shenz/Documents/vslam/vslam_exercise/ThirdParties/g2o/install" && make -j32 && make install
 ```
 
-## 3.ceres
-[http://ceres-solver.org/installation.html](http://ceres-solver.org/installation.html)
+## 4.ceres
+Ref: [http://ceres-solver.org/installation.html](http://ceres-solver.org/installation.html)
+
+**Remember to change the DCMAKE_INSTALL_PREFIX path!!!**
 
 ```shell script
 # CMake google-glog gflags BLAS LAPACK Eigen3 SuiteSparse(optional) CXSparse(optional)
-sudo apt-get install -y cmake libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen3-dev libsuitesparse-dev
+sudo apt update && sudo apt-get install cmake libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen3-dev libsuitesparse-dev
+git clone https://ceres-solver.googlesource.com/ceres-solver && cd ceres-solver && mkdir build && cd build && git checkout master
+cmake .. && make -j32 && sudo make install
+or
+cmake .. -DCMAKE_INSTALL_PREFIX="/home/shenz/Documents/vslam/vslam_exercise/ThirdParties/ceres-solver" && make -j4 && make install 
 ```
 
-**Remember to change the DCMAKE_INSTALL_PREFIX path!!!**
+## 5.googlelog
+Ref: [https://github.com/google/glog.git](https://github.com/google/glog.git)
 
 ```shell script
-git clone https://ceres-solver.googlesource.com/ceres-solver
-cd ceres-solver && rm -rf build install && mkdir build && mkdir install && cd build && git checkout master && git pull
-cmake .. -DCMAKE_INSTALL_PREFIX="/home/shenz/Documents/ba/BA_exercise/ThirdParties/ceres-solver/install" && make -j32 && make install 
+git clone https://github.com/google/glog.git
+cd glog && mkdir build && cd build && git checkout master && cmake .. && make -j32 && sudo make install
 ```
 
 # Usage
