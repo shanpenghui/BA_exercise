@@ -3,6 +3,9 @@ A exercise of BA, using g2o, ceres and eigen.
 
 感谢六哥、黄志明、付堉家的支持。
 
+# Reference
+Ref: [Bundle Adjustment原理及应用](https://blog.csdn.net/shanpenghui/article/details/112600080?spm=1001.2014.3001.5501)
+
 # Clone
 git clone --recurse-submodules -j8 https://github.com/shanpenghui/BA_exercise
 
